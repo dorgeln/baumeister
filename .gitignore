@@ -1,0 +1,32 @@
+# Binaries
+bin
+
+# Micromamba
+.micromamba
+
+# Secrets
+.secrets
+
+# Certbot
+.certbot
+
+# ENV
+.env
+
+# SSH
+id_rsa
+id_rsa.pub
+
+# Python
+***.pyc
+
+# Testing
+inventory/testing.yml
+
+# Terraform
+**/.terraform
+**/.terraform.lock.hcl
+**/terraform.tfstate
+**/terraform.tfstate.backup
+**/.terraform.tfstate.lock.info
+

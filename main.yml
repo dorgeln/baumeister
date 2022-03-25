@@ -1,0 +1,14 @@
+---
+- hosts:
+  - localhost
+
+  tasks:
+  # - name: Add host to group 'just_created' with variable foo=42
+  #   add_host:
+  #     name: 127.0.0.1
+  #     groups: just_created
+  #     foo: 42
+
+  - name: Debug testvar
+    ansible.builtin.debug:
+      msg: "{{ testvar }}"
