@@ -1,0 +1,15 @@
+[Unit]
+Description=Loki service
+After=network.target
+
+[Service]
+Type=simple
+EnvironmentFile=/etc/default/grafana-server
+User=grafana
+Group=grafana
+Type=simple
+Restart=on-failure
+ExecStart=/usr/local/bin/loki --config.file  /etc/loki/loki.yaml
+
+[Install]
+WantedBy=multi-user.target

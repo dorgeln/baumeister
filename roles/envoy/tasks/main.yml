@@ -1,0 +1,4 @@
+---
+- name: Install envoy
+  import_tasks: envoy.yml
+  tags: envoy

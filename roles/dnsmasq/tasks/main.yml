@@ -1,0 +1,6 @@
+---
+- name: Configure dnsmasq
+  import_tasks: dnsmasq.yml
+  tags:
+    - dnsmasq
+    - never

@@ -1,0 +1,29 @@
+﻿- name: Copy Certs
+  copy:
+    src: "{{certs}}/live/{{fqdn}}/{{item}}"
+    dest: "{{item}}"
+    mode: '0600'
+  with_items:
+    - fullchain.pem
+    - privkey.pem
+
+
+- name: Create envoy directory
+  become: yes
+  file:
+    path: "/etc/envoy"
+    state: directory
+
+- name: Create envoy config
+  template:
+    src: "{{ item }}"
+    dest: /etc/envoy
+    mode: '0600'
+  with_items:
+    - envoy.yaml
+
+- name: Build envoy
+  shell: /home/ubuntu/.local/bin/docker-compose up --build -d
+
+- name: Restart envoy
+  shell: /home/ubuntu/.local/bin/docker-compose restart

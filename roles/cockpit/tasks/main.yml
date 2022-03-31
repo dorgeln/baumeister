@@ -1,0 +1,6 @@
+---
+- name: Configure cockpit
+  import_tasks: cockpit.yml
+  tags:
+    - cockpit
+    - never

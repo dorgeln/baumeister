@@ -1,0 +1,4 @@
+---
+- name: Install microserver
+  import_tasks: microserver.yml
+  tags: microserver

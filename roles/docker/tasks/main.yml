@@ -1,0 +1,6 @@
+---
+- name: Install docker
+  import_tasks: docker.yml
+  tags:
+    - never
+    - docker

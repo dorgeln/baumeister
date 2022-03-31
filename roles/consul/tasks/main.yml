@@ -1,0 +1,4 @@
+---
+- name: Install consul
+  import_tasks: consul.yml
+  tags: consul

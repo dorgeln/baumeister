@@ -1,0 +1,4 @@
+---
+- name: Configure kind
+  import_tasks: kind.yml
+  tags: kind

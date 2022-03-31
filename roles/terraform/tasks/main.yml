@@ -1,0 +1,4 @@
+﻿---
+- name: Run terraform
+  import_tasks: terraform.yml
+  tags: terraform

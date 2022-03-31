@@ -1,0 +1,59 @@
+# - include_role:
+#     name: firewalld
+
+- name: Install dnsmasq
+  become: yes
+  ansible.builtin.package:
+    name: 
+        - dnsmasq
+    state: latest
+
+- name: Set dnsmasq defaults
+  become: yes
+  template:
+    src: dnsmasq
+    dest: /etc/default/dnsmasq
+    mode: '0644'
+    owner: "root"
+    group: "root"
+  notify:
+    - Restart dnsmasq
+
+- name: Create dnsmasq config
+  become: yes
+  template:
+    src: dnsmasq.conf
+    dest: /etc/dnsmasq.conf
+    mode: 0644
+    owner: root
+    group: root
+  notify:
+    - Restart dnsmasq
+
+- name: Create lease directory
+  ansible.builtin.file:
+    path: /var/lib/libvirt/dnsmasq/
+    state: directory
+    mode: '0755'
+
+- name: Touch lease file
+  ansible.builtin.file:
+    path: /var/lib/libvirt/dnsmasq/brnat.hostsfile
+    state: touch
+    mode: u=rw,g=r,o=r
+
+- name: Enable dnsmasq
+  service:
+    name: dnsmasq
+    state: started
+    enabled: true
+
+
+# - name: Permit udhcpd on dmz
+#   become: yes
+#   ansible.posix.firewalld:
+#     service: dhcp
+#     zone: dmz
+#     permanent: yes
+#     immediate: yes
+#     state: enabled

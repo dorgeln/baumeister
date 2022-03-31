@@ -1,0 +1,42 @@
+
+- name: Create certs directory
+  file:
+    path: "{{certs}}"
+    state: directory
+
+
+- name: Create OVH config
+  template:
+    src: "{{item}}"
+    dest: ".secrets/{{item}}"
+    mode: '0600'
+  with_items:
+    - ovh.ini
+
+- name: Create certbot script
+  template:
+    src: "{{item}}"
+    dest: "{{certs}}/{{item}}"
+    mode: '0700'
+  with_items:
+    - certbot.sh
+  vars:
+    hostnames: "{{ query('inventory_hostnames', 'all') }}"
+
+- name: Create certs
+  shell: "./certbot.sh"
+  args:
+    chdir: "{{certs}}"
+
+# - name: Create staging certs
+#   shell: "certbot certonly --force-renewal --test-cert --dns-ovh --non-interactive --agree-tos -m {{email}} --dns-ovh-credentials .secrets/ovh.ini -d {{gmm_fqdn}} -d {{gmm_fqdn_green}} -d {{gmm_fqdn_blue}} -d gmm-test.snakepit.net --work-dir {{certs}} --config-dir {{certs}} --logs-dir {{certs}} --dns-ovh-propagation-seconds 60"
+#   when: staging
+
+# # - name: Add aliases to staging certs
+# #   shell: "certbot certonly --expand --test-cert --dns-ovh --non-interactive --agree-tos -m {{email}} --dns-ovh-credentials .secrets/ovh.ini -d {{gmm_fqdn}} -d {{item}}  --work-dir {{certs}} --config-dir {{certs}} --logs-dir {{certs}} --dns-ovh-propagation-seconds 60"
+# #   loop: "{{ lookup('vars','gmm_aliases')}}"
+# #   when: staging
+
+# - name: Create Certs
+#   shell: "certbot certonly --force-renewal --dns-ovh --non-interactive --agree-tos -m {{email}} --dns-ovh-credentials .secrets/ovh.ini -d {{gmm_fqdn_alias}} -d {{gmm_fqdn}} -d {{gmm_fqdn_green}} -d {{gmm_fqdn_blue}}  --work-dir {{certs}} --config-dir {{certs}} --logs-dir {{certs}}"
+#   when: not staging

@@ -1,0 +1,11 @@
+
+[Service]
+ExecStart=/usr/local/bin/jaeger-all-in-one
+Restart=always
+StandardOutput=syslog
+SyslogIdentifier=jaeger-agent
+User=grafana
+Group=grafana
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,96 @@
+- name: Set hostname
+  become: yes
+  hostname:
+    name: "{{ inventory_hostname }}"
+
+- name: Update apt-cache and do upgrade
+  become: yes
+  apt:
+    update_cache: yes
+    cache_valid_time: 3600
+    upgrade: safe
+ 
+
+- name: Install tools + dependencies
+  become: yes
+  apt:
+    name: 
+        - apt-transport-https
+        - ca-certificates
+        - curl
+        - gnupg2
+        - software-properties-common
+        - htop
+        - sysstat
+        - iptraf
+        - ssh-import-id
+        - rsync
+        - libblockdev-crypto2
+        - libblockdev-mdraid2
+    state: present
+    update_cache: no
+
+- name: Add SSH-Keys
+  become: yes
+  shell: ssh-import-id gh:{{item}}
+  with_items:
+    - atrawog
+
+- name: Add SSH-Keys
+  shell: ssh-import-id gh:{{item}}
+  with_items:
+    - atrawog
+
+- name: Update apt-cache and do backports upgrade
+  become: yes
+  apt:
+    update_cache: yes
+    cache_valid_time: 3600
+    upgrade: safe
+    default_release: bullseye-backports
+
+- ansible.posix.sysctl:
+    name: net.ipv4.icmp_echo_ignore_broadcasts
+    value: '1'
+    sysctl_set: yes
+    state: present
+    reload: yes
+
+- ansible.posix.sysctl:
+    name: net.ipv4.ip_forward
+    value: '1'
+    sysctl_set: yes
+    state: present
+    reload: yes
+
+- ansible.posix.sysctl:
+    name: net.ipv4.conf.all.forwarding
+    value: '1'
+    sysctl_set: yes
+    state: present
+    reload: yes
+
+- ansible.posix.sysctl:
+    name: net.ipv6.conf.all.forwarding
+    value: '1'
+    sysctl_set: yes
+    state: present
+    reload: yes
+
+- ansible.posix.sysctl:
+    name: net.ipv6.conf.default.forwarding
+    value: '1'
+    sysctl_set: yes
+    state: present
+    reload: yes
+
+- name: Check if reboot required
+  become: yes
+  stat:
+    path: /var/run/reboot-required
+  register: reboot_required_file
+
+- name: Reboot if required
+  become: yes
+  reboot:
+  when: reboot_required_file.stat.exists == true

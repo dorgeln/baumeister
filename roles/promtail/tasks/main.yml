@@ -1,0 +1,4 @@
+---
+- name: Install promtail
+  import_tasks: promtail.yml
+  tags: promtail

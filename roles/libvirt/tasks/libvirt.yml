@@ -1,0 +1,146 @@
+
+- name: Install libvirt
+  become: yes
+  apt:
+    name: 
+        - qemu
+        - qemu-system
+        - qemu-utils
+        - qemu-block-extra
+        - libvirt-daemon-system
+        - libvirt-clients
+        - dnsmasq
+        - cloud-image-utils
+        - git
+        - genisoimage
+        - libguestfs-tools
+        - libosinfo-bin
+        - python3-libvirt
+        - python3-lxml
+        - virtinst
+        - bridge-utils
+        - ovmf
+        - cloud-utils
+        - whois
+        - spice-html5
+        - spice-vdagent
+        - novnc
+    default_release: bullseye-backports
+    state: present
+    update_cache: no
+
+
+
+
+- name: Add Ansible user to libvirt group
+  become: yes
+  user:
+    name: "{{ansible_user}}"
+    groups: libvirt
+    append: yes
+
+- name: Add Ansible user to libvirt-qemu group
+  become: yes
+  user:
+    name: "{{ansible_user}}"
+    groups: libvirt-qemu
+    append: yes
+
+- name:  Configure libvirt polkit
+  become: yes
+  template:
+    src: "50-libvirt.rules"
+    dest: "/etc/polkit-1/localauthority/50-local.d/50-libvirt.rules"
+    mode: '0755'
+
+# - name:  Configure qemu
+#   become: yes
+#   template:
+#     src: "qemu.conf"
+#     dest: "/etc/libvirt/qemu.conf"
+#     mode: '0600'
+
+
+- name: Restart libvirtd
+  ansible.builtin.service:
+    name: libvirtd
+    state: restarted
+
+- name: Restart firewalld
+  ansible.builtin.service:
+    name: firewalld
+    state: restarted
+
+
+- name: Enable libvirtd
+  service:
+    name: libvirtd
+    state: started
+    enabled: true
+
+
+- name: Permit dhcp traffic
+  become: yes
+  ansible.posix.firewalld:
+    service: dhcp
+    zone: libvirt
+    permanent: yes
+    immediate: yes
+    state: enabled
+
+- name: Permit dhcp traffic
+  become: yes
+  ansible.posix.firewalld:
+    service: dhcpv6
+    zone: libvirt
+    permanent: yes
+    immediate: yes
+    state: enabled
+
+- name: Permit dns traffic
+  become: yes
+  ansible.posix.firewalld:
+    service: dns
+    zone: libvirt
+    permanent: yes
+    immediate: yes
+    state: enabled
+
+
+- name: Permit dns traffic
+  become: yes
+  ansible.posix.firewalld:
+    service: tftp
+    zone: libvirt
+    permanent: yes
+    immediate: yes
+    state: enabled
+
+
+- ansible.posix.firewalld:
+    zone: libvirt
+    service: mdns
+    permanent: yes
+    state: enabled
+    immediate: true
+
+- ansible.posix.firewalld:
+    zone: libvirt
+    service: llmnr
+    permanent: yes
+    state: enabled
+    immediate: true
+
+- name: Reset connection
+  meta: reset_connection
+
+# - name: Define the foobar network
+#   community.libvirt.virt_net:
+#     command: define
+#     name: foobar
+#     xml: '{{ lookup("file", "foobridge.xml") }}'
+
+# - name: Start the foobar network
+#   community.libvirt.virt_net:
+#     command: start
+#     name: foobar

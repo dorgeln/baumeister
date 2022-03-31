@@ -1,0 +1,15 @@
+[Unit]
+Description=prometheus service
+After=network.target
+
+[Service]
+Type=simple
+EnvironmentFile=/etc/default/grafana-server
+User=root
+Group=root
+Type=simple
+Restart=on-failure
+ExecStart=/usr/local/bin/prometheus --config.file  /etc/prometheus/prometheus.yaml
+
+[Install]
+WantedBy=multi-user.target

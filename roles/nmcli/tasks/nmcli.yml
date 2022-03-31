@@ -1,0 +1,41 @@
+- name: Install network-manager
+  become: yes
+  ansible.builtin.package:
+    name: 
+        - network-manager
+        - network-manager-config-connectivity-debian
+        - python3-networkmanager
+        - bridge-utils
+    state: latest
+
+
+- name: Create NetworkManager Config
+  become: yes
+  template:
+    src: "{{item}}"
+    dest: "/etc/NetworkManager/{{item}}"
+    mode: '0644'
+    owner: "root"
+    group: "root"
+  with_items:
+    - NetworkManager.conf
+  notify:
+    - Restart NetworkManager
+
+- name: Enable NetworkManager
+  service:
+    name: NetworkManager
+    state: started
+    enabled: true
+
+# - name: Add brnat
+#   community.general.nmcli:
+#     conn_name: brnat
+#     ifname: brnat
+#     type: bridge
+#     ip4: 100.100.0.254/16
+#     state: present
+#     autoconnect: yes
+#     zone: internal
+#   notify:
+#       - Restart NetworkManager

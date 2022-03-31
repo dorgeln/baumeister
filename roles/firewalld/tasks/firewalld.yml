@@ -1,0 +1,41 @@
+# - include_role:
+#     name: nmcli
+
+- name: Install firewalld
+  become: yes
+  apt:
+    name: 
+        - firewalld 
+    state: present
+    update_cache: no
+
+
+- name: Enable firewalld
+  service:
+    name: firewalld
+    state: started
+    enabled: true
+
+- ansible.posix.firewalld:
+    zone: public
+    interface: "{{ ansible_default_ipv4.interface }}"
+    permanent: true
+    immediate: true
+    state: enabled
+
+- ansible.posix.firewalld:
+    zone: public
+    port: 22001-22099/tcp
+    permanent: yes
+    state: enabled
+    immediate: true
+
+
+# - ansible.posix.firewalld:
+#     zone: public
+#     masquerade: yes
+#     permanent: true
+#     immediate: true
+#     state: enabled
+
+

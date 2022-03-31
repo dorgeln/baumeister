@@ -1,0 +1,6 @@
+---
+- name: Configure resolved
+  import_tasks: resolved.yml
+  tags:
+    - resolved
+    - never

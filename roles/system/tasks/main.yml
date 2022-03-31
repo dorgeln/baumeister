@@ -1,0 +1,6 @@
+---
+- name: Configure system and tools
+  import_tasks: system.yml
+  tags:
+    - system
+    - never

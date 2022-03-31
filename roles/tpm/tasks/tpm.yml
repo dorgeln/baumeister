@@ -1,0 +1,33 @@
+- name: Install tpm dependecies
+  become: yes
+  apt:
+    name: 
+        - tpm2-tools
+        - build-essential
+        - devscripts
+        - equivs
+        - expect
+        - gnutls-bin
+        - gnutls-dev
+        - libfuse-dev
+        - libglib2.0-dev
+        - libjson-glib-dev
+        - libseccomp-dev
+        - libssl-dev
+        - libtasn1-dev
+    state: present
+    update_cache: yes
+
+- name: Install swtpm
+  become: yes
+  apt:
+    deb: "{{ item }}"
+    state: present
+    update_cache: yes
+  loop:
+    - http://oss.blazis.com/libtpms/libtpms0_0.8.4-1.0_amd64.deb
+    - http://oss.blazis.com/libtpms/libtpms-dev_0.8.4-1.0_amd64.deb
+    - http://oss.blazis.com/swtpm/swtpm-libs_0.6.0-1.0_amd64.deb
+    - http://oss.blazis.com/swtpm/swtpm-dev_0.6.0-1.0_amd64.deb
+    - http://oss.blazis.com/swtpm/swtpm_0.6.0-1.0_amd64.deb
+    - http://oss.blazis.com/swtpm/swtpm-tools_0.6.0-1.0_amd64.deb

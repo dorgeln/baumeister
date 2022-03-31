@@ -1,0 +1,53 @@
+- name: Get prometheus
+  become: yes
+  ansible.builtin.unarchive:
+    src: https://github.com/prometheus/prometheus/releases/download/v2.33.1/prometheus-2.33.1.linux-amd64.tar.gz
+    dest: /tmp
+    remote_src: yes
+
+- name: Copy prometheus
+  become: yes
+  ansible.builtin.copy:
+    remote_src: yes
+    src: /tmp/prometheus-2.33.1.linux-amd64/{{item}}
+    dest: /usr/local/bin/{{item}}
+    mode: u+rwx,g+rwx,o-rwx
+  with_items:
+    - "prometheus"
+    - "promtool"
+
+- name: Create prometheus directory
+  become: yes
+  file:
+    path: "/etc/prometheus"
+    owner: "root"
+    group: "root"
+    state: directory
+
+- name: Create prometheus config
+  become: yes
+  template:
+    src: "{{item}}"
+    dest: "/etc/prometheus/{{item}}"
+    mode: '0644'
+    owner: "root"
+    group: "root"
+  with_items:
+    - prometheus.yaml
+
+- name: Create prometheus service config
+  become: yes
+  template:
+    src: "{{item}}"
+    dest: "/etc/systemd/system/{{item}}"
+    mode: '0644'
+  with_items:
+    - prometheus.service
+
+- name: Enable prometheus
+  become: yes
+  service:
+    name: prometheus
+    state: restarted
+    daemon_reload: yes
+    enabled: yes

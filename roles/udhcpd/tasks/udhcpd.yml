@@ -1,0 +1,47 @@
+- include_role:
+    name: firewalld
+
+- name: Install udhcpd
+  become: yes
+  ansible.builtin.package:
+    name: 
+        - udhcpd
+    state: latest
+
+- name: Set udhcpd defaults
+  become: yes
+  template:
+    src: udhcpd
+    dest: /etc/default/udhcpd
+    mode: '0644'
+    owner: "root"
+    group: "root"
+  notify:
+    - Restart udhcpd
+
+- name: Create udhcpd config
+  become: yes
+  template:
+    src: udhcpd.conf
+    dest: /etc/udhcpd.conf
+    mode: 0644
+    owner: root
+    group: root
+  notify:
+    - Restart udhcpd
+
+- name: Enable udhcpd
+  service:
+    name: udhcpd
+    state: started
+    enabled: true
+
+
+- name: Permit udhcpd on dmz
+  become: yes
+  ansible.posix.firewalld:
+    service: dhcp
+    zone: dmz
+    permanent: yes
+    immediate: yes
+    state: enabled

@@ -1,0 +1,83 @@
+- include_role:
+    name: nginx
+
+- name: Get loki
+  become: yes
+  ansible.builtin.unarchive:
+    src: https://github.com/grafana/loki/releases/download/v2.4.2/loki-linux-amd64.zip
+    dest: /usr/local/bin
+    remote_src: yes
+
+- name: Create loki symbolic link
+  become: yes 
+  file:
+    src: "/usr/local/bin/loki-linux-amd64"
+    dest: "/usr/local/bin/loki"
+    state: link
+
+- name: Create loki directory
+  become: yes
+  file:
+    path: "/etc/loki"
+    owner: "grafana"
+    group: "grafana"
+    state: directory
+
+- name: Create loki config
+  become: yes
+  template:
+    src: "{{item}}"
+    dest: "/etc/loki/{{item}}"
+    mode: '0644'
+    owner: "grafana"
+    group: "grafana"
+  with_items:
+    - loki.yaml
+
+- name: Create loki service config
+  become: yes
+  template:
+    src: "{{item}}"
+    dest: "/etc/systemd/system/{{item}}"
+    mode: '0644'
+  with_items:
+    - loki.service
+
+- name: Create loki vhost config
+  become: yes
+  template:
+    src: "{{item}}"
+    dest: "/etc/nginx/conf.d/{{item}}"
+    mode: '0644'
+    owner: "root"
+    group: "root"
+  with_items:
+    - loki.conf
+
+
+- name: Add loki user to password file
+  become: yes
+  community.general.htpasswd:
+    path: /etc/nginx/passwords
+    name: loki
+    password: "{{gra_password}}"
+    owner: root
+    group: www-data
+    mode: 0640
+
+- name: Enable loki
+  become: yes
+  service:
+    name: loki
+    state: restarted
+    daemon_reload: yes
+    enabled: yes
+
+
+- name: Enable nginx
+  become: yes
+  service:
+    name: nginx
+    state: restarted
+    daemon_reload: yes
+    enabled: yes

@@ -15,7 +15,6 @@
 # You should have received a copy of the GNU General Public License
 # along with Ansible.  If not, see <http://www.gnu.org/licenses/>.
 #############################################
-from __future__ import (absolute_import, division, print_function)
 __metaclass__ = type
 
 DOCUMENTATION = '''
@@ -57,6 +56,9 @@ import os
 from ansible import constants as C
 from ansible.errors import AnsibleParserError
 from ansible.plugins.vars import BaseVarsPlugin
+
+from dotenv import load_dotenv
+load_dotenv()
 
 
 FOUND = {}  # type: dict[str, list[str]]

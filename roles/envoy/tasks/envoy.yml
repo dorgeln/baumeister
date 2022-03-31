@@ -1,0 +1,59 @@
+# - name: Add envoy GPG key
+#   become: yes
+#   apt_key:
+#     url: https://deb.dl.getenvoy.io/public/gpg.8115BA8E629CC074.key
+#     state: present
+
+# - name: Add envoy repository
+#   become: yes
+#   apt_repository:
+#     repo: "deb [arch=amd64] https://deb.dl.getenvoy.io/public/deb/debian bullseye main"
+#     state: present
+#     update_cache: true
+
+# - name: Install envoy
+#   become: yes
+#   apt:
+#     update_cache: no 
+#     name: 
+#       - getenvoy-envoy
+#     state: present
+
+- name: Get envoy
+  become: yes 
+  get_url:
+    url: "https://github.com/pomerium/envoy-binaries/releases/download/v1.21.1/envoy-linux-amd64"
+    dest: "/usr/local/bin/envoy"
+    mode: '0755'
+
+- name: Create envoy directory
+  become: yes
+  file:
+    path: "/etc/envoy"
+    state: directory
+
+- name: Create envoy config
+  become: yes
+  template:
+    src: "{{item}}"
+    dest: "/etc/envoy/{{item}}"
+    mode: '0644'
+  with_items:
+    - envoy.yaml
+
+
+- name: Create envoy service config
+  become: yes
+  template:
+    src: "{{item}}"
+    dest: "/etc/systemd/system/{{item}}"
+    mode: '0644'
+  with_items:
+    - envoy.service
+
+- name: Enable envoy
+  become: yes
+  service:
+    name: envoy
+    state: restarted
+    enabled: yes

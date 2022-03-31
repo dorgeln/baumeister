@@ -1,0 +1,6 @@
+---
+- name: Configure firewalld
+  import_tasks: firewalld.yml
+  tags:
+    - firewalld
+    - never

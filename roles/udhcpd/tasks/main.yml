@@ -1,0 +1,6 @@
+---
+- name: Configure udhcpd
+  import_tasks: udhcpd.yml
+  tags:
+    - udhcpd
+    - never

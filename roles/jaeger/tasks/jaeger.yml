@@ -1,0 +1,25 @@
+- include_role:
+    name: nginx
+
+- name: Get jaeger
+  become: yes
+  ansible.builtin.unarchive:
+    src: https://github.com/jaegertracing/jaeger/releases/download/v1.31.0/jaeger-1.31.0-linux-amd64.tar.gz
+    dest: /usr/local/bin
+    remote_src: yes
+
+- name: Create jaeger symbolic link
+  become: yes 
+  file:
+    src: "/usr/local/bin/jaeger-1.31.0-linux-amd64/jaeger-all-in-one"
+    dest: "/usr/local/bin/jaeger-all-in-one"
+    state: link
+
+- name: Create jaeger service config
+  become: yes
+  template:
+    src: "{{item}}"
+    dest: "/etc/systemd/system/{{item}}"
+    mode: '0644'
+  with_items:
+    - jaeger.service

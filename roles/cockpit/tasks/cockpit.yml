@@ -1,0 +1,48 @@
+- include_role:
+    name: docker
+
+- include_role:
+    name: libvirt
+
+- name: Install cockpit
+  become: yes
+  apt:
+    name: 
+        - cockpit
+        - cockpit-bridge
+        - cockpit-pcp
+        - cockpit-machines
+        - cockpit-storaged
+        - cockpit-system
+        - cockpit-ws
+        - cockpit-networkmanager
+        - cockpit-packagekit
+        - cockpit-podman
+        - podman
+    state: present
+    update_cache: no
+
+- name: Get cockpit-docker
+  become: yes
+  ansible.builtin.unarchive:
+    src: https://github.com/mrevjd/cockpit-docker/releases/download/v2.0.3/cockpit-docker.tar.gz
+    dest: /usr/share/cockpit
+    remote_src: yes
+
+- name: Permit cockpit traffic
+  become: yes
+  ansible.posix.firewalld:
+    service: cockpit
+    zone: public
+    permanent: yes
+    immediate: yes
+    state: enabled
+
+
+- name: Enable cockpit
+  become: yes
+  service:
+    name: cockpit
+    state: started
+    enabled: true
+

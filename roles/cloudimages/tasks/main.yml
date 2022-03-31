@@ -1,0 +1,4 @@
+---
+- name: Install cloudimages
+  import_tasks: cloudimages.yml
+  tags: cloudimages

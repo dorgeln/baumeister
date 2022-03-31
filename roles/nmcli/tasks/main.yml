@@ -1,0 +1,6 @@
+---
+- name: Configure nmcli
+  import_tasks: nmcli.yml
+  tags:
+    - nmcli
+    - never

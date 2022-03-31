@@ -1,6 +1,9 @@
 # Binaries
 bin
 
+# Images
+images/
+
 # Micromamba
 .micromamba
 
@@ -24,6 +27,7 @@ id_rsa.pub
 inventory/testing.yml
 
 # Terraform
+tf/
 **/.terraform
 **/.terraform.lock.hcl
 **/terraform.tfstate

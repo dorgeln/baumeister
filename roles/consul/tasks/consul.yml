@@ -1,0 +1,15 @@
+- name: Get consul
+  become: yes
+  ansible.builtin.unarchive:
+    src: https://releases.hashicorp.com/consul/1.11.4/consul_1.11.4_linux_amd64.zip
+    dest: /usr/local/bin
+    remote_src: yes
+
+- name: Create consul service config
+  become: yes
+  template:
+    src: "{{item}}"
+    dest: "/etc/systemd/system/{{item}}"
+    mode: '0644'
+  with_items:
+    - consul.service

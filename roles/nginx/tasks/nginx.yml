@@ -1,0 +1,29 @@
+- name: Install Nginx
+  become: yes
+  apt:
+    name: 
+        - nginx
+        - apache2-utils
+        - python3-passlib
+
+
+- name: Create nginx config
+  become: yes
+  template:
+    src: "{{item}}"
+    dest: "/etc/nginx/{{item}}"
+    mode: '0644'
+    owner: "root"
+    group: "root"
+  with_items:
+    - nginx.conf
+
+- name: Copy Certs
+  become: yes
+  copy:
+    src: "{{certs}}/live/{{fqdn}}/{{item}}"
+    dest: "/etc/nginx/{{item}}"
+    mode: '0600'
+  with_items:
+    - fullchain.pem
+    - privkey.pem

@@ -1,0 +1,15 @@
+- name: Install kubernetes
+  become: yes
+  apt:
+    name: 
+        - kubernetes-client
+        - kubetail
+    state: present
+    update_cache: no
+
+- name: Install kind
+  become: yes
+  get_url:
+    url: https://kind.sigs.k8s.io/dl/v0.11.1/kind-linux-amd64 
+    dest: /usr/local/bin/kind
+    mode: '0755'

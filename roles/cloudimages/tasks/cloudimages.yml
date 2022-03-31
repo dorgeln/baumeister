@@ -1,0 +1,60 @@
+# - name: Get Centos 8
+#   become: yes 
+#   get_url:
+#     url: "https://cloud.centos.org/centos/8-stream/x86_64/images/CentOS-Stream-GenericCloud-8-20210603.0.x86_64.qcow2"
+#     dest: "/var/lib/libvirt/images/templates"
+#     mode: '0440'
+
+# - name: Get Ubuntu 20.04 LTS
+#   become: yes 
+#   get_url:
+#     url: "http://cloud-images.ubuntu.com/focal/current/focal-server-cloudimg-amd64.img"
+#     dest: "/var/lib/libvirt/images/focal-server-cloudimg-amd64.img"
+#     mode: '0440'
+
+- name: Get Debian 11 generic
+  get_url:
+    url: "https://cloud.debian.org/cdimage/cloud/bullseye/20220121-894/debian-11-generic-amd64-20220121-894.qcow2"
+    dest: "images/debian-11-generic-amd64-20220121-894.qcow2"
+
+# - name: Get virtio-win
+#   become: yes 
+#   get_url:
+#     url: "https://fedorapeople.org/groups/virt/virtio-win/direct-downloads/archive-virtio/virtio-win-0.1.215-2/virtio-win-0.1.215.iso"
+#     dest: "/var/lib/libvirt/images/virtio-win-0.1.215.iso"
+#     mode: '0444'
+
+# - name: Prepare Debian 11 image
+#   become: yes
+#   ansible.builtin.shell: |
+#     qemu-img convert -f qcow2 -O qcow2 /var/lib/libvirt/images/debian-11-generic-amd64-20220121-894.qcow2 /var/lib/libvirt/images/debian11generic.qcow2
+#     qemu-img resize /var/lib/libvirt/images/debian11generic.qcow2 20G
+  # args:
+  #   creates: /var/lib/libvirt/images/debian11generic.qcow2
+
+#     qemu-img resize /var/lib/libvirt/images/templates/debian11.qcow2 20G
+# #   virt-customize -a /var/lib/libvirt/images/templates/debian11.qcow2 --root-password password:debian 
+
+# - name: Prepare Ubuntu 20.04 image
+#   become: yes
+#   ansible.builtin.shell: |
+#     qemu-img convert -f qcow2 -O qcow2 /var/lib/libvirt/images/templates/focal-server-cloudimg-amd64.img /var/lib/libvirt/images/templates/ubuntu2004.qcow2
+#     qemu-img resize /var/lib/libvirt/images/templates/ubuntu2004.qcow2 20G
+#     virt-customize -a /var/lib/libvirt/images/templates/ubuntu2004.qcow2 --root-password password:ubuntu 
+
+
+# - name: Get Debian 11 nocloud
+#   become: yes 
+#   get_url:
+#     url: "https://cloud.debian.org//cdimage/cloud/bullseye/20220121-894/debian-11-nocloud-amd64-20220121-894.qcow2"
+#     dest: "/var/lib/libvirt/images/templates/debian-11-nocloud-amd64.qcow2"
+#     mode: '0440'
+
+
+# - name: Get Debian 11 genericcloud
+#   become: yesssh-a 
+#   get_url:
+#     url: "https://cloud.debian.org/images/cloud/bullseye/20220121-894/debian-11-genericcloud-amd64-20220121-894.qcow2"
+#     dest: "/var/lib/libvirt/images/templates/debian-11-genericcloud-amd64.qcow2"
+#     mode: '0440'
+

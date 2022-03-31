@@ -1,0 +1,49 @@
+- name: Get promtail
+  become: yes
+  ansible.builtin.unarchive:
+    src: https://github.com/grafana/loki/releases/download/v2.4.2/promtail-linux-amd64.zip
+    dest: /usr/local/bin
+    remote_src: yes
+
+- name: Create promtail symbolic link
+  become: yes 
+  file:
+    src: "/usr/local/bin/promtail-linux-amd64"
+    dest: "/usr/local/bin/promtail"
+    state: link
+
+- name: Create promtail directory
+  become: yes
+  file:
+    path: "/etc/promtail"
+    owner: "root"
+    group: "root"
+    state: directory
+
+- name: Create promtail config
+  become: yes
+  template:
+    src: "{{item}}"
+    dest: "/etc/promtail/{{item}}"
+    mode: '0640'
+    owner: "root"
+    group: "root"
+  with_items:
+    - promtail.yaml
+
+- name: Create promtail service config
+  become: yes
+  template:
+    src: "{{item}}"
+    dest: "/etc/systemd/system/{{item}}"
+    mode: '0644'
+  with_items:
+    - promtail.service
+
+- name: Enable promtail
+  become: yes
+  service:
+    name: promtail
+    state: restarted
+    daemon_reload: yes
+    enabled: yes

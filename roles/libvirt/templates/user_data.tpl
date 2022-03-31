@@ -1,0 +1,14 @@
+#cloud-config
+hostname: ${hostname}
+package_update: true
+package_upgrade: true
+package_reboot_if_required: true
+ssh_authorized_keys:
+  - ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQD3Tzmf8dsAqlSQnjNC7RNlqKu8q2OM3UoIKIqlyJnSfvdS/CCAHOITtu7IN2mBF9yBZm9Vyso8BHBDeshsw60pwS1vuV5BosLUEFnNoXQTc2uPUMJMQS3Sm6pEB1TSGr078vOB8ElemXfTsoqM3hrINmwagy9HbQ/2c2GrHkHvKRv2tjGEZiBFDRyceG/Ug6lv1A0DrEDi1yl07JpJl4gNobyRzdKEGVQezMT/atiat4e7xmaV8CneWAAUKmY6tnRDsC4/BUc9NlpyxEeumG9i72XSVckFpM2PF76rdo4gr3nUyOfu9YONZJo9fMBKxQDk+epNc3jneNSANhgPhH0HXOcuETHrI09di73oaHNyuDmW+KmCKr+HPy8ZJa72MUpINaxVPg3SC44Pzp9oFPE+spmhQc1bqKDcOhCaJdi/k1nlvhiGT2QE1sh9aRYBUeVN/4DTcu3dHmFJE1pPrkKxyE9wlx+OfIKe/g7YFNFkhufM5jvvWnR9h3KapH1nc7ERuX0BeSBisWNLvLpn+hr1JOi1UF+Aod1lKaNZA8uEr3A86MXP0y+dbyTLAtD0cHk0ZDz60Plu68BGZF2ANReEC/kexMYmvDOILK/u3u5KQyecLxkPJCW52hFAn2H43Ell4Wm7wqDWjl0cNrQwbYutQ6KBBItORe9uIMD7/ntidw== atrawog@dorgeln.org
+ssh_pwauth: False
+disable_root: True
+chpasswd:
+  list: |
+    root:${rootpwd}
+  expire: False
+

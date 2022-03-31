@@ -1,0 +1,23 @@
+- name: Install grafana
+  become: yes
+  apt:
+    deb: https://dl.grafana.com/enterprise/release/grafana-enterprise_8.3.4_amd64.deb
+    state: present
+
+- name: Create grafana config
+  become: yes
+  template:
+    src: "{{item}}"
+    dest: "/etc/grafana/{{item}}"
+    mode: '0640'
+  with_items:
+    - grafana.ini
+
+
+- name: Enable grafana
+  become: yes
+  service:
+    name: grafana-server
+    state: restarted
+    enabled: yes
+

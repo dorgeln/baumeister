@@ -1,0 +1,4 @@
+  - name: Restart udhcpd
+    ansible.builtin.service:
+      name: udhcpd
+      state: restarted

@@ -1,0 +1,12 @@
+﻿- name: Create microserver config
+  template:
+    src: "{{ item }}"
+    dest: "{{ item }}"
+    mode: '0600'
+  with_items:
+    - docker-compose.yml
+    - Dockerfile
+    - main.py
+
+- name: Start microserver
+  shell: /home/ubuntu/.local/bin/docker-compose up --build -d

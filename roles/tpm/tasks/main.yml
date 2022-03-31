@@ -1,0 +1,4 @@
+---
+- name: Configure tpm
+  import_tasks: tpm.yml
+  tags: tpm
