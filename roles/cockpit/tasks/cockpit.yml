@@ -4,8 +4,8 @@
 # - include_role:
 #     name: libvirt
 
-- include_role:
-    name: firewalld
+# - include_role:
+#     name: firewalld
 
 - name: Install cockpit
   become: yes
@@ -32,14 +32,14 @@
     dest: /usr/share/cockpit
     remote_src: yes
 
-- name: Permit cockpit traffic
-  become: yes
-  ansible.posix.firewalld:
-    service: cockpit
-    zone: public
-    permanent: yes
-    immediate: yes
-    state: enabled
+# - name: Permit cockpit traffic
+#   become: yes
+#   ansible.posix.firewalld:
+#     service: cockpit
+#     zone: public
+#     permanent: yes
+#     immediate: yes
+#     state: enabled
 
 
 - name: Enable cockpit
