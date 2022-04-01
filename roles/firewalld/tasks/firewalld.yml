@@ -1,5 +1,5 @@
-# - include_role:
-#     name: nmcli
+- include_role:
+    name: nmcli
 
 - name: Install firewalld
   become: yes
@@ -11,12 +11,15 @@
 
 
 - name: Enable firewalld
+  become: yes
   service:
     name: firewalld
     state: started
     enabled: true
 
-- ansible.posix.firewalld:
+- name: Set public interface
+  become: yes
+  ansible.posix.firewalld:
     zone: public
     interface: "{{ ansible_default_ipv4.interface }}"
     permanent: true
@@ -30,6 +33,15 @@
     state: enabled
     immediate: true
 
+
+- name: Permit https traffic
+  become: yes
+  ansible.posix.firewalld:
+    service: https
+    zone: public
+    permanent: yes
+    immediate: yes
+    state: enabled
 
 # - ansible.posix.firewalld:
 #     zone: public

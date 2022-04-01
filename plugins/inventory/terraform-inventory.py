@@ -59,13 +59,13 @@ class InventoryModule(BaseInventoryPlugin):
                             host= a['name']
                             ansible_host = a['network_interface'][0]['addresses'][0]
 
-                            print(host, ansible_host)
-
                             if 'metadata' in a and 'group' in a['metadata']:
                                 group=a['metadata']['group']
                                 self.inventory.add_group(group)
                                 self.inventory.add_host(host=host, group=group)
                                 self.inventory.set_variable(host, 'ansible_host', ansible_host)
+                                # ansible_ssh_common_args='-o ProxyCommand="ssh -W %h:%p -q root@h.dorgeln.cloud"'
+                                # self.inventory.set_variable(host, 'ansible_ssh_common_args', ansible_ssh_common_args)
 
                                 for metadata in a['metadata']:
                                     self.inventory.set_variable(host, metadata , a['metadata'][metadata])

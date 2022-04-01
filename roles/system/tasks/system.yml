@@ -28,7 +28,7 @@
         - libblockdev-crypto2
         - libblockdev-mdraid2
     state: present
-    update_cache: no
+    update_cache: yes
 
 - name: Add SSH-Keys
   become: yes
@@ -49,40 +49,62 @@
     upgrade: safe
     default_release: bullseye-backports
 
-- ansible.posix.sysctl:
-    name: net.ipv4.icmp_echo_ignore_broadcasts
-    value: '1'
-    sysctl_set: yes
-    state: present
-    reload: yes
 
-- ansible.posix.sysctl:
-    name: net.ipv4.ip_forward
-    value: '1'
-    sysctl_set: yes
-    state: present
-    reload: yes
 
-- ansible.posix.sysctl:
-    name: net.ipv4.conf.all.forwarding
+- name: Set sysctl
+  become: yes
+  ansible.posix.sysctl:
+    name: "{{ item }}"
     value: '1'
     sysctl_set: yes
     state: present
     reload: yes
+  with_items:
+    - net.ipv4.icmp_echo_ignore_broadcasts
+    - net.ipv4.ip_forward
+    - net.ipv4.conf.all.forwarding
+    - net.ipv6.conf.all.forwarding
+    - net.ipv6.conf.default.forwarding
 
-- ansible.posix.sysctl:
-    name: net.ipv6.conf.all.forwarding
-    value: '1'
-    sysctl_set: yes
-    state: present
-    reload: yes
 
-- ansible.posix.sysctl:
-    name: net.ipv6.conf.default.forwarding
-    value: '1'
-    sysctl_set: yes
-    state: present
-    reload: yes
+# - ansible.posix.sysctl:
+#     name: net.ipv4.icmp_echo_ignore_broadcasts
+#     value: '1'
+#     sysctl_set: yes
+#     state: present
+#     reload: yes
+
+# - ansible.posix.sysctl:
+#     become: yes
+#     name: net.ipv4.ip_forward
+#     value: '1'
+#     sysctl_set: yes
+#     state: present
+#     reload: yes
+
+# - ansible.posix.sysctl:
+#     become: yes
+#     name: net.ipv4.conf.all.forwarding
+#     value: '1'
+#     sysctl_set: yes
+#     state: present
+#     reload: yes
+
+# - ansible.posix.sysctl:
+#     become: yes
+#     name: net.ipv6.conf.all.forwarding
+#     value: '1'
+#     sysctl_set: yes
+#     state: present
+#     reload: yes
+
+# - ansible.posix.sysctl:
+#     become: yes
+#     name: net.ipv6.conf.default.forwarding
+#     value: '1'
+#     sysctl_set: yes
+#     state: present
+#     reload: yes
 
 - name: Check if reboot required
   become: yes

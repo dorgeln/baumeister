@@ -1,8 +1,11 @@
-- include_role:
-    name: docker
+# - include_role:
+#     name: docker
+
+# - include_role:
+#     name: libvirt
 
 - include_role:
-    name: libvirt
+    name: firewalld
 
 - name: Install cockpit
   become: yes
