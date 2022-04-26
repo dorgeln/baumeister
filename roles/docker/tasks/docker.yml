@@ -17,9 +17,8 @@
     update_cache: no 
     name: 
       - docker-ce
-      - docker-compose
-    state: present
-
+      - docker-compose-plugin
+    state: latest
 
 - name: Add Ansible user to docker group
   become: yes

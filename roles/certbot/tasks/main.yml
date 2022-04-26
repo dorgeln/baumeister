@@ -1,4 +1,0 @@
-﻿---
-- name: Run certbot
-  import_tasks: certbot.yml
-  tags: certbot

@@ -27,6 +27,8 @@
         - rsync
         - libblockdev-crypto2
         - libblockdev-mdraid2
+        - python3-passlib
+        - unzip
     state: present
     update_cache: yes
 
@@ -41,13 +43,13 @@
   with_items:
     - atrawog
 
-- name: Update apt-cache and do backports upgrade
-  become: yes
-  apt:
-    update_cache: yes
-    cache_valid_time: 3600
-    upgrade: safe
-    default_release: bullseye-backports
+# - name: Update apt-cache and do backports upgrade
+#   become: yes
+#   apt:
+#     update_cache: yes
+#     cache_valid_time: 3600
+#     upgrade: safe
+#     default_release: bullseye-backports
 
 
 

@@ -1,0 +1,14 @@
+[Unit]
+Description=Minecraft PaperMc
+After=network.target
+
+[Service]
+SyslogIdentifier=minecraft-papermc
+Type=simple
+User=fabian
+WorkingDirectory=/home/fabian/minecraft-papermc
+ExecStart=/usr/lib/jvm/java-17-openjdk-amd64/bin/java -jar -Xmx8192M -Xmx8192M paper.jar nogui pause 
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target

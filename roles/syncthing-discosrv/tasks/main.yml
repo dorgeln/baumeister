@@ -1,0 +1,4 @@
+---
+- name: Install syncthing-discosrv
+  import_tasks: syncthing-discosrv.yml
+  tags: syncthing-discosrv

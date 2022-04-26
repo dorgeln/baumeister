@@ -22,6 +22,8 @@ import subprocess
 import json
 import os
 
+from dotenv import load_dotenv
+load_dotenv()
 
 class InventoryModule(BaseInventoryPlugin):
     NAME = 'terraform'
@@ -44,9 +46,8 @@ class InventoryModule(BaseInventoryPlugin):
             raise AnsibleParserError(
                 'All correct options required: {}'.format(e))
         
-        #tfstate_dir=os.path.join('tf',os.getenv('DEPLOYMENT'),os.getenv('WORKSPACE'))
+        tfstate_dir=os.path.join('tf',os.getenv('ANSIBLE_VAR_workspace'),os.getenv('ANSIBLE_VAR_deployment'),os.getenv('ANSIBLE_VAR_version_major'))
         #tfworkspace_cmd=subprocess.run(f"terraform workspace select %s"%os.getenv('WORKSPACE'),cwd=tfstate_dir, capture_output=True, shell=True, check=True, text=True)
-        tfstate_dir=os.path.join('tf/testing')
         tfstate_cmd=subprocess.run("terraform state pull",cwd=tfstate_dir, capture_output=True, shell=True, check=True, text=True)
         tfstate=json.loads(tfstate_cmd.stdout)
         for r in tfstate['resources']:
@@ -64,8 +65,6 @@ class InventoryModule(BaseInventoryPlugin):
                                 self.inventory.add_group(group)
                                 self.inventory.add_host(host=host, group=group)
                                 self.inventory.set_variable(host, 'ansible_host', ansible_host)
-                                # ansible_ssh_common_args='-o ProxyCommand="ssh -W %h:%p -q root@h.dorgeln.cloud"'
-                                # self.inventory.set_variable(host, 'ansible_ssh_common_args', ansible_ssh_common_args)
 
                                 for metadata in a['metadata']:
                                     self.inventory.set_variable(host, metadata , a['metadata'][metadata])

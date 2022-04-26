@@ -1,0 +1,34 @@
+
+- name: Create certs directory
+  file:
+    path: "{{certs_dir}}"
+    state: directory
+
+
+- name: Create secrets directory
+  file:
+    path: "{{secrets_dir}}"
+    state: directory
+
+- name: Create cloudflare config
+  template:
+    src: "{{item}}"
+    dest: ".secrets/{{item}}"
+    mode: '0600'
+  with_items:
+    - cloudflare.ini
+
+- name: Create certbot script
+  template:
+    src: "{{item}}"
+    dest: "{{certs_dir}}/{{item}}"
+    mode: '0700'
+  with_items:
+    - cloudflare.sh
+  vars:
+    hostnames: "{{ query('inventory_hostnames', 'all') }}"
+
+- name: Create certs
+  shell: "./cloudflare.sh"
+  args:
+    chdir: "{{certs_dir}}"

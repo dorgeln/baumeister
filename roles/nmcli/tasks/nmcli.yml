@@ -39,3 +39,6 @@
 #     zone: internal
 #   notify:
 #       - Restart NetworkManager
+
+- include_role:
+    name: resolved

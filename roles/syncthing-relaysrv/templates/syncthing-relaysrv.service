@@ -1,0 +1,16 @@
+[Unit]
+Description=Syncthing Relay Server
+After=network.target
+Documentation=man:strelaysrv(1)
+
+[Service]
+User=syncthing
+Group=syncthing
+WorkingDirectory=/var/lib/syncthing/relaysrv
+EnvironmentFile=/etc/default/syncthing-relaysrv
+ExecStart=/usr/bin/strelaysrv -nat=${NAT} $STRELAYSRV_OPTS
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target
+Alias=strelaysrv.service

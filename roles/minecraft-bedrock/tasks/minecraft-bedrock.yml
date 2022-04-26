@@ -1,0 +1,26 @@
+- name: Create minecraft-bedrock service config
+  become: yes
+  template:
+    src: "{{item}}"
+    dest: "/etc/systemd/system/{{item}}"
+    mode: '0644'
+  with_items:
+    - minecraft-bedrock.service
+  notify:
+    - restart minecraft-bedrock
+
+- name: Enable minecraft-bedrock
+  become: yes
+  service:
+    name: minecraft-bedrock
+    state: started
+    enabled: yes
+
+- name: Allow Minecraft-Bedrock Ports
+  become: yes
+  ansible.posix.firewalld:
+    zone: public
+    port: 19132-19133/udp
+    permanent: yes
+    state: enabled
+    immediate: true

@@ -1,0 +1,78 @@
+static_resources:
+    listeners:
+      - name: ssh_22001
+        address:
+          socket_address:
+            address: 0.0.0.0
+            port_value: 22001
+        filter_chains:
+          - filters:
+              - name: envoy.filters.network.tcp_proxy
+                typed_config:
+                  "@type": type.googleapis.com/envoy.extensions.filters.network.tcp_proxy.v3.TcpProxy
+                  stat_prefix: destination
+                  cluster: cluster_22001
+      - name: https
+        address:
+          socket_address:
+            address: 0.0.0.0
+            port_value: 443
+        filter_chains:
+          - filters:
+            - name: envoy.filters.network.http_connection_manager
+              typed_config:
+                "@type": type.googleapis.com/envoy.extensions.filters.network.http_connection_manager.v3.HttpConnectionManager
+                stat_prefix: ingress_ws_to_ws
+                upgrade_configs:
+                - upgrade_type: websocket
+                route_config:
+                  name: local_route
+                  virtual_hosts:
+                  - name: app
+                    domains:
+                    - "*"
+                    routes:
+                    - match:
+                        prefix: "/"
+                      route:
+                        cluster: cockpit
+                http_filters:
+                - name: envoy.filters.http.router
+            transport_socket:
+              name: envoy.transport_sockets.tls
+              typed_config:
+                "@type": type.googleapis.com/envoy.extensions.transport_sockets.tls.v3.DownstreamTlsContext
+                common_tls_context:
+                  tls_certificates:
+                  - certificate_chain:
+                      filename: "/etc/letsencrypt/live/envoy/fullchain.pem"
+                    private_key:
+                      filename: "/etc/letsencrypt/live/envoy/privkey.pem"
+
+    clusters:
+      - name: cluster_22001
+        connect_timeout: 30s
+        type: LOGICAL_DNS
+        dns_lookup_family: V4_ONLY
+        load_assignment:
+          cluster_name: cluster_22001
+          endpoints:
+            - lb_endpoints:
+                - endpoint:
+                    address:
+                      socket_address:
+                        address: 100.100.0.2
+                        port_value: 22
+
+      - name: cockpit
+        type: STRICT_DNS
+        lb_policy: ROUND_ROBIN
+        load_assignment:
+          cluster_name: cockpit
+          endpoints:
+          - lb_endpoints:
+            - endpoint:
+                address:
+                  socket_address:
+                    address: 127.0.0.1
+                    port_value: 9090

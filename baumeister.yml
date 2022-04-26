@@ -1,0 +1,80 @@
+---
+- hosts:
+  - localhost
+  vars:
+    tf_dir: "tf/{{workspace}}/{{deployment}}/{{version_major}}"
+    regions: "{{grafana_region}}"
+
+  pre_tasks:
+
+  - name: Adding ssh.keys
+    shell: |
+      eval "$(ssh-agent)"
+      ssh-add .secrets/id_rsa
+      ssh-add
+    tags:
+      - always
+
+  - name: Add libvirt_host
+    add_host:
+      name: "{{libvirt_host}}"
+      ansible_host:  "{{libvirt_host}}.{{domain}}"
+      groups: libvirt_host
+      ansible_user: "{{libvirt_user}}"
+      cockpit_host: "{{libvirt_cockpit_host}}"
+      syncthing_url: "{{libvirt_syncthing_host}}"
+    when: libvirt_host is defined
+    tags:
+      - always
+
+  - name: Debug libvirt_host group
+    ansible.builtin.debug:
+      msg: "{{ groups['libvirt_host']}}"
+    when: groups['libvirt_host'] is defined
+    tags:
+      - always
+
+  roles:
+    - role: cloudimages
+      when: provider=="libvirt"
+
+    - role: certbot-ovh
+    - role: certbot-cloudflare
+    - role: terraform-openstack
+      when: provider=="openstack"
+
+- hosts:
+    - libvirt_host
+  roles:
+    - system
+    - nmcli
+    - docker
+    - firewalld
+    - libvirt
+    - resolved
+    - cockpit
+    - envoy
+    - envoy-https
+    - envoy-tcp
+    - envoy-udp
+    - user
+    - syncthing-relaysrv
+    - syncthing-discosrv
+
+- hosts:
+    - instances
+  roles:
+    - system
+    - cockpit
+    - user
+    - minecraft-bedrock
+    - minecraft-bukkit
+    - minecraft-papermc
+    - syncthing
+
+- hosts:
+    - quetz
+  roles:
+    - system
+    - docker
+    - quetz

@@ -1,0 +1,4 @@
+---
+- name: Install minecraft-bedrock
+  import_tasks: minecraft-bedrock.yml
+  tags: minecraft-bedrock

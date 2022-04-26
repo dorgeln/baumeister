@@ -9,16 +9,15 @@
   notify:
     - Restart resolved
 
-
-
 - name: Enable systemd-resolved
+  become: yes
   service:
     name: systemd-resolved
     state: started
     enabled: true
-    enabled: true
 
 - name: Create a symbolic link
+  become: yes
   ansible.builtin.file:
     src: /run/systemd/resolve/stub-resolv.conf
     dest: /etc/resolv.conf

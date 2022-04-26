@@ -10,11 +10,11 @@ images/
 # Secrets
 .secrets
 
-# Certbot
-.certbot
+# Certs
+.certs
 
 # ENV
-.env
+.env*
 
 # SSH
 id_rsa

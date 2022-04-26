@@ -1,0 +1,5 @@
+  - name: Restart envoy-https
+    become: yes
+    ansible.builtin.service:
+      name: envoy-https
+      state: restarted

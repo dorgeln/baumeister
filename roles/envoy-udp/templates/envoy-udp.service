@@ -1,0 +1,8 @@
+
+[Service]
+ExecStart=/usr/local/bin/envoy -c /etc/envoy/envoy-udp.yaml --base-id 3
+Restart=always
+StandardOutput=journal
+
+[Install]
+WantedBy=multi-user.target

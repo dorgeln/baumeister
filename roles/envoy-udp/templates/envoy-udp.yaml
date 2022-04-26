@@ -1,0 +1,95 @@
+static_resources:
+  listeners:
+  - name: listener_19132
+    address:
+      socket_address:
+        protocol: UDP
+        address: 0.0.0.0
+        port_value: 19132
+    udp_listener_config:
+      downstream_socket_config:
+        max_rx_datagram_size: 9000
+    listener_filters:
+    - name: envoy.filters.udp_listener.udp_proxy
+      typed_config:
+        '@type': type.googleapis.com/envoy.extensions.filters.udp.udp_proxy.v3.UdpProxyConfig
+        stat_prefix: service
+        cluster: cluster_19132
+        upstream_socket_config:
+          max_rx_datagram_size: 9000
+
+  - name: listener_25565
+    address:
+      socket_address:
+        protocol: UDP
+        address: 0.0.0.0
+        port_value: 25565
+    udp_listener_config:
+      downstream_socket_config:
+        max_rx_datagram_size: 9000
+    listener_filters:
+    - name: envoy.filters.udp_listener.udp_proxy
+      typed_config:
+        '@type': type.googleapis.com/envoy.extensions.filters.udp.udp_proxy.v3.UdpProxyConfig
+        stat_prefix: service
+        cluster: cluster_25565
+        upstream_socket_config:
+          max_rx_datagram_size: 9000
+
+  - name: listener_25566
+    address:
+      socket_address:
+        protocol: UDP
+        address: 0.0.0.0
+        port_value: 25566
+    udp_listener_config:
+      downstream_socket_config:
+        max_rx_datagram_size: 9000
+    listener_filters:
+    - name: envoy.filters.udp_listener.udp_proxy
+      typed_config:
+        '@type': type.googleapis.com/envoy.extensions.filters.udp.udp_proxy.v3.UdpProxyConfig
+        stat_prefix: service
+        cluster: cluster_25566
+        upstream_socket_config:
+          max_rx_datagram_size: 9000
+
+  clusters:
+  - name: cluster_19132
+    type: STATIC
+    lb_policy: ROUND_ROBIN
+    load_assignment:
+      cluster_name: cluster_19132
+      endpoints:
+      - lb_endpoints:
+        - endpoint:
+            address:
+              socket_address:
+                address: 100.100.0.2
+                port_value: 19132
+
+  - name: cluster_25565
+    type: STATIC
+    lb_policy: ROUND_ROBIN
+    load_assignment:
+      cluster_name: cluster_25565
+      endpoints:
+      - lb_endpoints:
+        - endpoint:
+            address:
+              socket_address:
+                address: 100.100.0.2
+                port_value: 25565
+
+  - name: cluster_25566
+    type: STATIC
+    lb_policy: ROUND_ROBIN
+    load_assignment:
+      cluster_name: cluster_25566
+      endpoints:
+      - lb_endpoints:
+        - endpoint:
+            address:
+              socket_address:
+                address: 100.100.0.2
+                port_value: 25566

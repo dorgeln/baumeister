@@ -1,0 +1,4 @@
+﻿---
+- name: Run certbot-cloudflare
+  import_tasks: certbot-cloudflare.yml
+  tags: certbot-cloudflare

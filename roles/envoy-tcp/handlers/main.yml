@@ -1,0 +1,6 @@
+  - name: restart envoy-tcp
+    become: yes
+    ansible.builtin.service:
+      name: envoy-tcp
+      daemon_reload: yes
+      state: restarted

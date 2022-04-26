@@ -1,0 +1,21 @@
+- name: Ensure group wheel exists
+  become: yes
+  ansible.builtin.group:
+    name: wheel
+    state: present
+
+- name: Create the minecraft user
+  become: yes
+  ansible.builtin.user:
+    name: "{{minecraft_user}}"
+    password: "{{ minecraft_pwd |password_hash('sha512') }}"
+    create_home: yes
+    group: wheel
+
+- name: Allow sudo
+  become: yes
+  ansible.builtin.lineinfile:
+    path: "/etc/sudoers.d/{{minecraft_user}}"
+    line: '%wheel ALL=(ALL) NOPASSWD: ALL'
+    create: yes
+    validate: 'visudo -cf %s'

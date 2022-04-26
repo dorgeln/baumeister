@@ -1,0 +1,6 @@
+  - name: restart minecraft-papermc
+    become: yes
+    ansible.builtin.service:
+      name: minecraft-papermc
+      daemon_reload: yes
+      state: restarted

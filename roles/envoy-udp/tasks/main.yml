@@ -1,0 +1,4 @@
+---
+- name: Install envoy-udp
+  import_tasks: envoy-udp.yml
+  tags: envoy-udp

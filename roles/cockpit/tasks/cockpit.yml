@@ -4,8 +4,8 @@
 # - include_role:
 #     name: libvirt
 
-# - include_role:
-#     name: firewalld
+- include_role:
+    name: firewalld
 
 - name: Install cockpit
   become: yes
@@ -14,33 +14,76 @@
         - cockpit
         - cockpit-bridge
         - cockpit-pcp
-        - cockpit-machines
+        # - cockpit-machines
         - cockpit-storaged
         - cockpit-system
         - cockpit-ws
         - cockpit-networkmanager
         - cockpit-packagekit
-        - cockpit-podman
-        - podman
+        # - cockpit-podman
+        # - podman
     state: present
     update_cache: no
 
-- name: Get cockpit-docker
+- name: Create udisk2 modules directory
   become: yes
-  ansible.builtin.unarchive:
-    src: https://github.com/mrevjd/cockpit-docker/releases/download/v2.0.3/cockpit-docker.tar.gz
-    dest: /usr/share/cockpit
-    remote_src: yes
+  file:
+      path: /usr/lib/x86_64-linux-gnu/udisks2/modules
+      state: directory
 
-# - name: Permit cockpit traffic
+- name: Create cockpit config
+  become: yes
+  template:
+    src: "{{item}}"
+    dest: "/etc/cockpit/{{item}}"
+    mode: '0644'
+  with_items:
+    - cockpit.conf
+  notify:
+    - Restart cockpit
+
+- name: Copy cert
+  become: yes
+  ansible.builtin.copy:
+    src: "{{certs_dir}}/live/baumeister/fullchain.pem"
+    dest: "/etc/cockpit/ws-certs.d/99-envoy.cert"
+    mode: '0644'
+  notify:
+    - Restart cockpit
+
+- name: Copy key
+  become: yes
+  ansible.builtin.copy:
+    src: "{{certs_dir}}/live/baumeister/privkey.pem"
+    dest: "/etc/cockpit/ws-certs.d/99-envoy.key"
+    mode: '0644'
+  notify:
+    - Restart cockpit
+
+- name: Install cockpit-navigator
+  become: yes
+  apt:
+    deb: "{{ item }}"
+    state: present
+    update_cache: yes
+  loop:
+    - https://github.com/45Drives/cockpit-navigator/releases/download/v0.5.8/cockpit-navigator_0.5.8-1focal_all.deb
+
+# - name: Get cockpit-docker
 #   become: yes
-#   ansible.posix.firewalld:
-#     service: cockpit
-#     zone: public
-#     permanent: yes
-#     immediate: yes
-#     state: enabled
+#   ansible.builtin.unarchive:
+#     src: https://github.com/mrevjd/cockpit-docker/releases/download/v2.0.3/cockpit-docker.tar.gz
+#     dest: /usr/share/cockpit
+#     remote_src: yes
 
+- name: Permit cockpit traffic
+  become: yes
+  ansible.posix.firewalld:
+    service: cockpit
+    zone: public
+    permanent: yes
+    immediate: yes
+    state: enabled
 
 - name: Enable cockpit
   become: yes

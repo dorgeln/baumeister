@@ -1,0 +1,64 @@
+version: "3.8"
+
+services:
+  db:
+    image: postgres
+    # debug
+    # command: ["postgres", "-c", "log_statement=all"]
+    environment:
+      - POSTGRES_DB=quetz
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+    volumes:
+      - /home/{{ansible_user}}/postgres-data:/var/lib/postgresql/data:z
+    healthcheck:
+      test: pg_isready -U postgres
+      interval: 20s
+      timeout: 5s
+      retries: 5
+
+  web:
+    build: .
+    command: quetz start /quetz-data/beta --port 8000 --host 0.0.0.0 --proxy-headers --reload --log-level=trace
+    # TODO fix proxy headers!
+    # TODO figure out if this config is useful... seems to start 6 copies of quetz?!
+    # command: QUETZ_CONFIG_FILE=/quetz-data/beta/config.toml \
+    #   gunicorn quetz.main:app \
+    #     --forwarded-allow-ips="*" \
+    #     -k uvicorn.workers.UvicornWorker -w 6 -b 0.0.0.0:8010
+    volumes:
+      - /home/{{ansible_user}}/quetz-data:/quetz-data:z
+      - /home/{{ansible_user}}/mamba-pm-frontend:/quetz-frontend:z
+    environment:
+      # this allows https to go through using x-forwarded-for headers
+      # possible improvement: https://github.com/tiangolo/fastapi/issues/2033#issuecomment-696465251
+      - FORWARDED_ALLOW_IPS=*
+    # do not allow direct access
+    # ports:
+    # - "8000:8000"
+    depends_on:
+      - migration
+      - db
+
+  migration:
+    build: .
+    command: bash -c "wait-for-it.sh db:5432 && quetz init-db /quetz-data/beta"
+    volumes:
+      - /home/{{ansible_user}}/quetz-data:/quetz-data:z
+    # links:
+    #  - db
+    depends_on:
+      - db
+
+  nginx_proxy:
+    image: nginx
+    container_name: nginx_proxy
+    ports:
+      - 80:80
+      - 443:443
+    volumes:
+      - /home/{{ansible_user}}/mamba-pm-frontend:/quetz-frontend:z
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+      - /etc/letsencrypt/:/etc/letsencrypt/:ro
+    depends_on:
+      - web

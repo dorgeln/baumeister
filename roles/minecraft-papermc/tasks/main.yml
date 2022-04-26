@@ -1,0 +1,4 @@
+---
+- name: Install minecraft-papermc
+  import_tasks: minecraft-papermc.yml
+  tags: minecraft-papermc

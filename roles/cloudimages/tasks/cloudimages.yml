@@ -14,8 +14,8 @@
 
 - name: Get Debian 11 generic
   get_url:
-    url: "https://cloud.debian.org/cdimage/cloud/bullseye/20220121-894/debian-11-generic-amd64-20220121-894.qcow2"
-    dest: "images/debian-11-generic-amd64-20220121-894.qcow2"
+    url: "https://cloud.debian.org/cdimage/cloud/bullseye/20220328-962/debian-11-generic-amd64-20220328-962.qcow2"
+    dest: "images/debian-11-generic-amd64-20220328-962.qcow2"
 
 # - name: Get virtio-win
 #   become: yes 

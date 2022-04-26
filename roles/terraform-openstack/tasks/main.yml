@@ -1,0 +1,6 @@
+﻿---
+- name: Run terraform-openstack
+  import_tasks: terraform-openstack.yml
+  tags: 
+    - terraform-openstack
+    - never

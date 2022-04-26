@@ -13,3 +13,9 @@
     mode: '0644'
   with_items:
     - consul.service
+
+- name: Enable consul
+  service:
+    name: consul
+    state: started
+    enabled: true

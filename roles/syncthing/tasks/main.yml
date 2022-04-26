@@ -1,0 +1,4 @@
+---
+- name: Install syncthing
+  import_tasks: syncthing.yml
+  tags: syncthing

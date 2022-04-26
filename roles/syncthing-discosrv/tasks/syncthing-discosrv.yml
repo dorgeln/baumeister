@@ -1,0 +1,22 @@
+- name: Install syncthing-discosrv
+  become: yes
+  ansible.builtin.package:
+    name: 
+        - syncthing-discosrv
+    state: latest
+
+- name: Enable syncthing-discosrv
+  become: yes
+  service:
+    name: syncthing-discosrv
+    state: started
+    enabled: yes
+
+- name: Allow syncthing-relaysrv Ports
+  become: yes
+  ansible.posix.firewalld:
+    zone: public
+    port: 8443/tcp
+    permanent: yes
+    state: enabled
+    immediate: true

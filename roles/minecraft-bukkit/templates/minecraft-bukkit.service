@@ -1,0 +1,14 @@
+[Unit]
+Description=Minecraft Bukkit Port 25565 
+After=network.target
+
+[Service]
+SyslogIdentifier=minecraft-bukkit
+Type=simple
+User=fabian
+WorkingDirectory=/home/fabian/minecraft-bukkit
+ExecStart=/usr/lib/jvm/java-17-openjdk-amd64/bin/java -jar -Xmx8192M -Xmx8192M craftbukkit.jar nogui pause 
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target

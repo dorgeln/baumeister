@@ -1,0 +1,8 @@
+
+[Service]
+ExecStart=/usr/local/bin/envoy -c /etc/envoy/envoy-https.yaml 
+Restart=always
+StandardOutput=journal
+
+[Install]
+WantedBy=multi-user.target

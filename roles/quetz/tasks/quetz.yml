@@ -1,0 +1,76 @@
+
+# For tasks is to work you need to run ssh-add on your local system
+# And add 'ForwardAgent yes' to your local SSH configuration
+# To enable Github authentifcation via SSH agent forwarding  
+
+# - name: Clone quetz-deploy repository
+#   git:
+#     repo: git@github.com:mamba-org/quetz-deploy
+#     dest: "/home/{{ansible_user}}/quetz-deploy"
+#     accept_hostkey: yes
+
+- name: Create quetz-deploy
+  file: 
+    path: /home/{{ansible_user}}/quetz-deploy
+    state: directory
+    recurse: yes
+
+- name: Create quetz-data/beta
+  file: 
+    path: /home/{{ansible_user}}/quetz-data/beta/channels
+    state: directory
+    recurse: yes
+
+
+# - name: Clone quetz-ansible
+#   git:
+#     repo: git@github.com:mamba-org/quetz-ansible
+#     dest: "/home/{{ansible_user}}/quetz-ansible"
+#     accept_hostkey: yes
+
+- name: Clone quetz
+  git:
+    repo: https://github.com/mamba-org/quetz.git
+    dest: "/home/{{ansible_user}}/quetz-deploy/quetz"
+    # version: 0f244dd207a74f04cffab1558a4cab48480d9bda
+    accept_hostkey: yes
+  ignore_errors: yes
+
+- name: Clone quetz-frontend 
+  git:
+    repo: git@github.com:mamba-org/quetz-frontend 
+    dest: /home/{{ansible_user}}/quetz-deploy/quetz-frontend
+    accept_hostkey: yes
+
+- name: Clone mamba-pm-frontend
+  git:
+    repo: git@github.com:mamba-org/mamba-pm-frontend
+    dest: /home/{{ansible_user}}/quetz-deploy/mamba-pm-frontend
+    accept_hostkey: yes
+
+- name: Create Dockerfile
+  template:
+    src: templates/Dockerfile
+    dest: /home/{{ansible_user}}/quetz-deploy/Dockerfile
+
+- name: Create docker-compose.yml
+  template:
+    src: templates/docker-compose.yml
+    dest: /home/{{ansible_user}}/quetz-deploy/docker-compose.yml
+
+- name: Create config.toml
+  template:
+    src: config.toml
+    dest: /home/{{ansible_user}}/quetz-data/beta/config.toml
+
+- name: Create nginx.conf
+  template:
+    src: nginx.conf
+    dest: /home/{{ansible_user}}/quetz-deploy/nginx.conf
+
+- name: Create wait-for-it.sh
+  template:
+    src: templates/wait-for-it.sh
+    dest: /home/{{ansible_user}}/quetz-deploy/wait-for-it.sh
+    mode: '0755'
+

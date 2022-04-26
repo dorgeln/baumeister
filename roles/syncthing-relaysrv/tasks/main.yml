@@ -1,0 +1,4 @@
+---
+- name: Install syncthing-relaysrv
+  import_tasks: syncthing-relaysrv.yml
+  tags: syncthing-relaysrv

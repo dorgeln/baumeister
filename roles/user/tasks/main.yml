@@ -1,0 +1,6 @@
+---
+- name: Configure user
+  import_tasks: user.yml
+  tags:
+    - user
+    - never

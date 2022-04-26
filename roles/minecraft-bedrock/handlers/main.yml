@@ -1,0 +1,6 @@
+  - name: restart minecraft-bedrock
+    become: yes
+    ansible.builtin.service:
+      name: minecraft-bedrock
+      daemon_reload: yes
+      state: restarted

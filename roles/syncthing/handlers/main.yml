@@ -1,0 +1,6 @@
+  - name: restart syncthing
+    become: yes
+    ansible.builtin.service:
+      name: syncthing@fabian
+      daemon_reload: yes
+      state: restarted

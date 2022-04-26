@@ -1,0 +1,74 @@
+- name: Add syncthing GPG key
+  become: yes
+  apt_key:
+    url: https://syncthing.net/release-key.gpg
+    state: present
+
+- name: Add Syncthing repository
+  become: yes
+  apt_repository:
+    repo: "deb https://apt.syncthing.net/ syncthing stable"
+    state: present
+    update_cache: true
+
+- name: Install syncthing
+  become: yes
+  ansible.builtin.package:
+    name: 
+        - syncthing
+    state: latest
+
+
+- name: Enable syncthing@fabian
+  become: yes
+  service:
+    name: syncthing@fabian
+    state: started
+    enabled: yes
+
+- name: Allow Syncthing Ports
+  become: yes
+  ansible.posix.firewalld:
+    zone: public
+    port: 8384/tcp
+    permanent: yes
+    state: enabled
+    immediate: true
+
+- name: Allow Syncthing Ports
+  become: yes
+  ansible.posix.firewalld:
+    zone: public
+    port: 21027/udp
+    permanent: yes
+    state: enabled
+    immediate: true
+
+
+- name: Allow Syncthing Ports
+  become: yes
+  ansible.posix.firewalld:
+    zone: public
+    port: 22000/tcp
+    permanent: yes
+    state: enabled
+    immediate: true
+
+
+- name: Allow Syncthing Ports
+  become: yes
+  ansible.posix.firewalld:
+    zone: public
+    port: 22000/udp
+    permanent: yes
+    state: enabled
+    immediate: true
+
+- name: Set address
+  become: yes
+  lineinfile:
+    path: /home/fabian/.config/syncthing/config.xml
+    search_string: '<address>127.0.0.1:8384</address>'
+    line: <address>0.0.0.0:8384</address>
+  notify:
+    - restart syncthing

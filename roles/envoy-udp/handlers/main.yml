@@ -1,0 +1,6 @@
+  - name: restart envoy-udp
+    become: yes
+    ansible.builtin.service:
+      name: envoy-udp
+      daemon_reload: yes
+      state: restarted

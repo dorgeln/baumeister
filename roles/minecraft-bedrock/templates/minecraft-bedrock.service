@@ -1,0 +1,14 @@
+[Unit]
+Description=Minecraft Bedrock Service
+After=network.target
+
+[Service]
+SyslogIdentifier=minecraft-bedrock
+Type=simple
+User=fabian
+WorkingDirectory=/home/fabian/minecraft-bedrock
+ExecStart=/home/fabian/minecraft-bedrock/bedrock_server
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target

@@ -26,22 +26,24 @@
     immediate: true
     state: enabled
 
-- ansible.posix.firewalld:
-    zone: public
-    port: 22001-22099/tcp
-    permanent: yes
-    state: enabled
-    immediate: true
+# - name: Allow SSH-Forwarding
+#   become: yes
+#   ansible.posix.firewalld:
+#     zone: public
+#     port: 22001-22099/tcp
+#     permanent: yes
+#     state: enabled
+#     immediate: true
 
 
-- name: Permit https traffic
-  become: yes
-  ansible.posix.firewalld:
-    service: https
-    zone: public
-    permanent: yes
-    immediate: yes
-    state: enabled
+# - name: Permit https traffic
+#   become: yes
+#   ansible.posix.firewalld:
+#     service: https
+#     zone: public
+#     permanent: yes
+#     immediate: yes
+#     state: enabled
 
 # - ansible.posix.firewalld:
 #     zone: public

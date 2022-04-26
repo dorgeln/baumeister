@@ -1,0 +1,110 @@
+- name: Install tools + dependencies
+  become: yes
+  apt:
+    name: 
+        - openjdk-17-jre
+
+
+- name: Create minecraft-papermc directory
+  become: yes
+  ansible.builtin.file:
+    path: "/home/fabian/minecraft-papermc"
+    owner: fabian
+    state: directory
+
+- name: Get PaperMC
+  become: yes
+  get_url:
+    url: "https://papermc.io/api/v2/projects/paper/versions/1.17.1/builds/411/downloads/paper-1.17.1-411.jar"
+    dest: "/home/fabian/minecraft-papermc/paper.jar"
+
+- name: Create minecraft-papermc service config
+  become: yes
+  template:
+    src: "{{item}}"
+    dest: "/etc/systemd/system/{{item}}"
+    mode: '0644'
+  with_items:
+    - minecraft-papermc.service
+  notify:
+    - restart minecraft-papermc
+
+- name: Accept EULA
+  become: yes
+  lineinfile:
+    path: /home/fabian/minecraft-papermc/eula.txt
+    search_string: 'eula='
+    line: eula=true
+  notify:
+    - restart minecraft-papermc
+
+- name: Set server-port
+  become: yes
+  lineinfile:
+    path: /home/fabian/minecraft-papermc/server.properties
+    search_string: 'server-port='
+    line: server-port=25565
+  notify:
+    - restart minecraft-papermc
+
+- name: Set query.port
+  become: yes
+  lineinfile:
+    path: /home/fabian/minecraft-papermc/server.properties
+    search_string: 'query.port='
+    line: query.port=25565
+  notify:
+    - restart minecraft-papermc
+
+- name: Set rcon.port
+  become: yes
+  lineinfile:
+    path: /home/fabian/minecraft-papermc/server.properties
+    search_string: 'rcon.port='
+    line: rcon.port=25575
+  notify:
+    - restart minecraft-papermc
+
+- name: Enable minecraft-papermc
+  become: yes
+  service:
+    name: minecraft-papermc
+    state: started
+    enabled: yes
+
+- name: Allow Minecraft-Ports
+  become: yes
+  ansible.posix.firewalld:
+    zone: public
+    port: 25565/udp
+    permanent: yes
+    state: enabled
+    immediate: true
+
+- name: Allow Minecraft-Ports
+  become: yes
+  ansible.posix.firewalld:
+    zone: public
+    port: 25565/tcp
+    permanent: yes
+    state: enabled
+    immediate: true
+
+
+- name: Allow Minimap
+  become: yes
+  ansible.posix.firewalld:
+    zone: public
+    port: 8123/tcp
+    permanent: yes
+    state: enabled
+    immediate: true
+
+- name: Allow Minecraft-Ports
+  become: yes
+  ansible.posix.firewalld:
+    zone: public
+    port: 25575/tcp
+    permanent: yes
+    state: enabled
+    immediate: true

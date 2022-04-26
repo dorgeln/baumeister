@@ -1,0 +1,65 @@
+- include_role:
+    name: envoy
+
+- name: Create envoy config
+  become: yes
+  template:
+    src: "{{item}}"
+    dest: "/etc/envoy/{{item}}"
+    mode: '0644'
+  with_items:
+    - envoy-https.yaml
+  notify:
+    - Restart envoy-https
+
+
+- name: Copy cert
+  become: yes
+  ansible.builtin.copy:
+    src: "{{certs_dir}}/live/baumeister/fullchain.pem"
+    dest: "/etc/envoy/fullchain.pem"
+    mode: '0644'
+
+- name: Copy key
+  become: yes
+  ansible.builtin.copy:
+    src: "{{certs_dir}}/live/baumeister/privkey.pem"
+    dest: "/etc/envoy/privkey.pem"
+    mode: '0644'
+
+
+- name: Create envoy service config
+  become: yes
+  template:
+    src: "{{item}}"
+    dest: "/etc/systemd/system/{{item}}"
+    mode: '0644'
+  with_items:
+    - envoy-https.service
+  notify:
+    - Restart envoy-https
+
+- name: Enable envoy-https
+  become: yes
+  service:
+    name: envoy-https
+    state: restarted
+    enabled: yes
+
+- name: Permit https traffic
+  become: yes
+  ansible.posix.firewalld:
+    service: http
+    zone: public
+    permanent: yes
+    immediate: yes
+    state: enabled
+
+- name: Permit https traffic
+  become: yes
+  ansible.posix.firewalld:
+    service: https
+    zone: public
+    permanent: yes
+    immediate: yes
+    state: enabled
