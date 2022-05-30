@@ -3,26 +3,26 @@
   - localhost
   vars:
     tf_dir: "tf/{{workspace}}/{{deployment}}/{{version_major}}"
-    regions: "{{grafana_region}}"
+    certs_dir: "certs/{{workspace}}/{{deployment}}/{{version_major}}"
+    regions: "{{quetz_region}}"
 
   pre_tasks:
 
-  - name: Adding ssh.keys
-    shell: |
-      eval "$(ssh-agent)"
-      ssh-add .secrets/id_rsa
-      ssh-add
-    tags:
-      - always
+  # - name: Adding ssh.keys
+  #   shell: |
+  #     eval "$(ssh-agent)"
+  #     ssh-add .secrets/id_rsa
+  #     ssh-add
+  #   tags:
+  #     - always
 
   - name: Add libvirt_host
     add_host:
       name: "{{libvirt_host}}"
       ansible_host:  "{{libvirt_host}}.{{domain}}"
+      cockpit_host: "{{libvirt_cockpit_host}}"
       groups: libvirt_host
       ansible_user: "{{libvirt_user}}"
-      cockpit_host: "{{libvirt_cockpit_host}}"
-      syncthing_url: "{{libvirt_syncthing_host}}"
     when: libvirt_host is defined
     tags:
       - always
@@ -60,6 +60,8 @@
     - user
     - syncthing-relaysrv
     - syncthing-discosrv
+  vars:
+    certs_dir: "certs/{{workspace}}/{{deployment}}/{{version_major}}"
 
 - hosts:
     - instances
@@ -71,10 +73,15 @@
     - minecraft-bukkit
     - minecraft-papermc
     - syncthing
-
+  vars:
+    certs_dir: "certs/{{workspace}}/{{deployment}}/{{version_major}}"
+    
 - hosts:
     - quetz
+  vars:
+    certs_dir: "certs/{{workspace}}/{{deployment}}/{{version_major}}"
   roles:
     - system
+    - certs
     - docker
     - quetz

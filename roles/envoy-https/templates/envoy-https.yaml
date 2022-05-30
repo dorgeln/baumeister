@@ -11,6 +11,7 @@ static_resources:
             - name: envoy.filters.network.http_connection_manager
               typed_config:
                 "@type": type.googleapis.com/envoy.extensions.filters.network.http_connection_manager.v3.HttpConnectionManager
+                codec_type: AUTO
                 stat_prefix: ingress_ws_to_ws
                 use_remote_address: true
                 upgrade_configs:
@@ -49,6 +50,16 @@ static_resources:
                         prefix: "/"
                       route:
                         cluster: {{hostvars[host]['minimap_host']}}
+{% endif %}
+{% if 'crafty_host' in hostvars[host] %}
+                  - name: {{hostvars[host]['crafty_host']}}
+                    domains:
+                    - "{{hostvars[host]['crafty_host']}}.{{domain}}"
+                    routes:
+                    - match:
+                        prefix: "/"
+                      route:
+                        cluster: {{hostvars[host]['crafty_host']}}
 {% endif %}
 {% endfor %}
                 http_filters:
@@ -107,5 +118,24 @@ static_resources:
                   socket_address:
                     address: {{hostvars[host]['ansible_host']}}
                     port_value: 8123
+{% endif %}
+{% if 'crafty_host' in hostvars[host] %}
+      - name: {{hostvars[host]['crafty_host']}}
+        connect_timeout: 2s
+        type: logical_dns
+        lb_policy: round_robin
+        load_assignment:
+          cluster_name: {{hostvars[host]['crafty_host']}}
+          endpoints:
+          - lb_endpoints:
+            - endpoint:
+                address:
+                  socket_address:
+                    address: {{hostvars[host]['ansible_host']}}
+                    port_value: 8000
+        transport_socket:
+          name: envoy.transport_sockets.tls
+          typed_config:
+            "@type": type.googleapis.com/envoy.extensions.transport_sockets.tls.v3.UpstreamTlsContext
 {% endif %}
 {% endfor %}

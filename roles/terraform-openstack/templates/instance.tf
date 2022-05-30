@@ -8,6 +8,8 @@ resource "openstack_compute_instance_v2" "{{name}}" {
      group = "{{group}}"
      ansible_user = "{{ansible_user}}"
      domain = "{{domain}}"
+     alias = "{{alias}}"
+     alias2 = "{{alias2}}"
    }
    key_pair    = openstack_compute_keypair_v2.{{deployment}}-{{workspace}}-{{region|lower}}.name
    network {

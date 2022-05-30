@@ -24,7 +24,6 @@ bucket_prefix="{{quetz_s3_bucket_prefix}}"
 bucket_suffix="{{quetz_s3_bucket_suffix}}"
 
 [users]
-# users with owner role
 admins = {{quetz_users_admins}}
 
 [logging]

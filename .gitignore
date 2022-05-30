@@ -11,7 +11,7 @@ images/
 .secrets
 
 # Certs
-.certs
+certs/
 
 # ENV
 .env*

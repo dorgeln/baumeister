@@ -44,16 +44,7 @@
   become: yes
   ansible.posix.firewalld:
     zone: public
-    port: 25565-25566/tcp
-    permanent: yes
-    state: enabled
-    immediate: true
-
-- name: Allow Minecraft-Ports
-  become: yes
-  ansible.posix.firewalld:
-    zone: public
-    port: 25575-25576/tcp
+    port: 25565-25585/tcp
     permanent: yes
     state: enabled
     immediate: true

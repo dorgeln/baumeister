@@ -15,38 +15,25 @@
     state: directory
     recurse: yes
 
-- name: Create quetz-data/beta
-  file: 
-    path: /home/{{ansible_user}}/quetz-data/beta/channels
-    state: directory
-    recurse: yes
-
-
-# - name: Clone quetz-ansible
-#   git:
-#     repo: git@github.com:mamba-org/quetz-ansible
-#     dest: "/home/{{ansible_user}}/quetz-ansible"
-#     accept_hostkey: yes
 
 - name: Clone quetz
   git:
-    repo: https://github.com/mamba-org/quetz.git
+    repo: "{{quetz_repo}}"
     dest: "/home/{{ansible_user}}/quetz-deploy/quetz"
-    # version: 0f244dd207a74f04cffab1558a4cab48480d9bda
     accept_hostkey: yes
   ignore_errors: yes
 
 - name: Clone quetz-frontend 
   git:
-    repo: git@github.com:mamba-org/quetz-frontend 
+    repo: "{{quetz_frontend_repo}}"
     dest: /home/{{ansible_user}}/quetz-deploy/quetz-frontend
     accept_hostkey: yes
 
-- name: Clone mamba-pm-frontend
-  git:
-    repo: git@github.com:mamba-org/mamba-pm-frontend
-    dest: /home/{{ansible_user}}/quetz-deploy/mamba-pm-frontend
-    accept_hostkey: yes
+- name: Create quetz-data
+  file: 
+    path: /home/{{ansible_user}}/quetz-data/channels
+    state: directory
+    recurse: yes
 
 - name: Create Dockerfile
   template:
@@ -61,7 +48,7 @@
 - name: Create config.toml
   template:
     src: config.toml
-    dest: /home/{{ansible_user}}/quetz-data/beta/config.toml
+    dest: /home/{{ansible_user}}/quetz-data/config.toml
 
 - name: Create nginx.conf
   template:
@@ -73,4 +60,3 @@
     src: templates/wait-for-it.sh
     dest: /home/{{ansible_user}}/quetz-deploy/wait-for-it.sh
     mode: '0755'
-

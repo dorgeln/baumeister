@@ -23,8 +23,16 @@
 - name: Create Terraform provider
   template:
     src: "provider_openstack.tf"
-    dest: "{{tf_dir}}/provider.tf"
+    dest: "{{tf_dir}}/provider_openstack.tf"
     mode: '0600'
+
+
+- name: Create Terraform provider
+  template:
+    src: "provider_ovh.tf"
+    dest: "{{tf_dir}}/provider_ovh.tf"
+    mode: '0600'
+
 
 - name: Create Terraform config
   template:
@@ -75,21 +83,55 @@
     mode: '0600'
   vars:
     - name: "{{workspace}}-{{deployment}}-{{quetz_name}}-{{quetz_version}}"
+    - alias: "{{quetz_alias}}"
+    - alias2: "{{quetz_alias2}}"
     - group: "{{quetz_group}}"
     - image: "{{quetz_image}}"
     - flavour: "{{quetz_flavor}}"
     - region: "{{quetz_region}}"
     - ansible_user: "{{quetz_ansible_user}}"
 
-# - name: Create Terraform Grafana DNS config
+- name: Create Terraform Quetz A Record
+  template:
+    src: "record_a_ovh.tf"
+    dest: "{{tf_dir}}/{{name}}.tf"
+    mode: '0600'
+  vars:
+    - hostname: "{{workspace}}-{{deployment}}-{{quetz_name}}-{{quetz_version}}"
+    - name: "dns_{{hostname}}"
+
+- name: Create Terraform Quetz CNAME Record
+  template:
+    src: "record_ovh.tf"
+    dest: "{{tf_dir}}/{{name}}.tf"
+    mode: '0600'
+  vars:
+
+    - zone: "{{domain}}"
+    - fieldtype: "CNAME"
+    - ttl: "60"
+    - subdomain: "{{workspace}}-{{deployment}}-{{quetz_name}}-{{quetz_version}}-repo"
+    - target: "{{workspace}}-{{deployment}}-{{quetz_name}}-{{quetz_version}}"
+    - name: "dns_{{subdomain}}"
+
+
+# - name: Create Terraform Quetz Repo DNS config
 #   template:
 #     src: "record_ovh.tf"
 #     dest: "{{tf_dir}}/{{name}}.tf"
 #     mode: '0600'
 #   vars:
-#     - hostname: "{{workspace}}-{{deployment}}-{{grafana_name}}-{{grafana_version}}"
-#     - name: "dns_{{hostname}}"
+#     - hostname: "{{workspace}}-{{deployment}}-{{quetz_name}}-repo-{{quetz_version}}"
+#     - name: "dns_{{hostname}}_repo"
 
+# - name: Create Terraform Quetz DNS config
+#   template:
+#     src: "record_ovh.tf"
+#     dest: "{{tf_dir}}/{{name}}.tf"
+#     mode: '0600'
+#   vars:
+#     - hostname: "{{workspace}}-{{deployment}}-{{quetz_name}}-repo-{{quetz_version}}"
+#     - name: "dns_{{hostname}}-repo"
 
 - name: Deploy OpenStack instances
   community.general.terraform:
@@ -107,13 +149,9 @@
       os_tenant_id: "{{os_tenant_id}}"
       os_tenant_name: "{{os_tenant_name}}"
       os_password: "{{os_password}}"
-  
+      ovh_endpoint: "{{ovh_endpoint}}"
+      ovh_application_key: "{{ovh_application_key}}"
+      ovh_consumer_key: "{{ovh_consumer_key}}"
+      ovh_application_secret: "{{ovh_application_secret}}"
 
-- name: Refresh inventory
-  meta: refresh_inventory
-
-- name: Show all hosts in inventory
-  ansible.builtin.debug:
-    msg: "{{ item }}"
-  loop: "{{ query('inventory_hostnames', 'all') }}"
 

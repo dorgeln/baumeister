@@ -44,7 +44,7 @@
   become: yes
   ansible.posix.firewalld:
     zone: public
-    port: 25565-25566/udp
+    port: 25565-25585/udp
     permanent: yes
     state: enabled
     immediate: true
