@@ -11,7 +11,7 @@ resource "openstack_compute_instance_v2" "{{name}}" {
      alias = "{{alias}}"
      alias2 = "{{alias2}}"
    }
-   key_pair    = openstack_compute_keypair_v2.{{deployment}}-{{workspace}}-{{region|lower}}.name
+   key_pair    = openstack_compute_keypair_v2.{{deployment}}-{{workspace}}-{{version_major}}-{{region|lower}}.name
    network {
     name      = "Ext-Net" 
    }

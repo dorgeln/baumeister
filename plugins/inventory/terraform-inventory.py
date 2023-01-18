@@ -47,6 +47,7 @@ class InventoryModule(BaseInventoryPlugin):
                 'All correct options required: {}'.format(e))
         
         tfstate_dir=os.path.join('tf',os.getenv('ANSIBLE_VAR_workspace'),os.getenv('ANSIBLE_VAR_deployment'),os.getenv('ANSIBLE_VAR_version_major'))
+        print ("TFSTATE_DIR",tfstate_dir)
         #tfworkspace_cmd=subprocess.run(f"terraform workspace select %s"%os.getenv('WORKSPACE'),cwd=tfstate_dir, capture_output=True, shell=True, check=True, text=True)
         tfstate_cmd=subprocess.run("terraform state pull",cwd=tfstate_dir, capture_output=True, shell=True, check=True, text=True)
         tfstate=json.loads(tfstate_cmd.stdout)

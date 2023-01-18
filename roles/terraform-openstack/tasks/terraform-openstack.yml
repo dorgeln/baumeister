@@ -52,7 +52,7 @@
 - name: Create Terraform SSH config
   template:
     src: "ssh.tf"
-    dest: "{{tf_dir}}/ssh_{{region|lower}}.tf"
+    dest: "{{tf_dir}}/ssh_{{version_major}}_{{region|lower}}.tf"
     mode: '0600'
   vars:
     - region: "{{item}}"
@@ -82,7 +82,7 @@
     dest: "{{tf_dir}}/{{name}}.tf"
     mode: '0600'
   vars:
-    - name: "{{workspace}}-{{deployment}}-{{quetz_name}}-{{quetz_version}}"
+    - name: "{{workspace}}-{{deployment}}-{{quetz_name}}-{{version_major}}"
     - alias: "{{quetz_alias}}"
     - alias2: "{{quetz_alias2}}"
     - group: "{{quetz_group}}"
@@ -97,7 +97,7 @@
     dest: "{{tf_dir}}/{{name}}.tf"
     mode: '0600'
   vars:
-    - hostname: "{{workspace}}-{{deployment}}-{{quetz_name}}-{{quetz_version}}"
+    - hostname: "{{workspace}}-{{deployment}}-{{quetz_name}}-{{version_major}}"
     - name: "dns_{{hostname}}"
 
 - name: Create Terraform Quetz CNAME Record
@@ -110,8 +110,8 @@
     - zone: "{{domain}}"
     - fieldtype: "CNAME"
     - ttl: "60"
-    - subdomain: "{{workspace}}-{{deployment}}-{{quetz_name}}-{{quetz_version}}-repo"
-    - target: "{{workspace}}-{{deployment}}-{{quetz_name}}-{{quetz_version}}"
+    - subdomain: "{{workspace}}-{{deployment}}-{{quetz_name}}-{{version_major}}-repo"
+    - target: "{{workspace}}-{{deployment}}-{{quetz_name}}-{{version_major}}"
     - name: "dns_{{subdomain}}"
 
 
@@ -121,7 +121,7 @@
 #     dest: "{{tf_dir}}/{{name}}.tf"
 #     mode: '0600'
 #   vars:
-#     - hostname: "{{workspace}}-{{deployment}}-{{quetz_name}}-repo-{{quetz_version}}"
+#     - hostname: "{{workspace}}-{{deployment}}-{{quetz_name}}-repo-{{version_major}}"
 #     - name: "dns_{{hostname}}_repo"
 
 # - name: Create Terraform Quetz DNS config
@@ -130,7 +130,7 @@
 #     dest: "{{tf_dir}}/{{name}}.tf"
 #     mode: '0600'
 #   vars:
-#     - hostname: "{{workspace}}-{{deployment}}-{{quetz_name}}-repo-{{quetz_version}}"
+#     - hostname: "{{workspace}}-{{deployment}}-{{quetz_name}}-repo-{{version_major}}"
 #     - name: "dns_{{hostname}}-repo"
 
 - name: Deploy OpenStack instances
